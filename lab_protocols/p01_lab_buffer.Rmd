@@ -1,0 +1,308 @@
+---
+title: "Laboratory Buffer"
+output:
+  word_document:
+    number_sections: true
+    toc: false
+    keep_md: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+here::here()
+```
+
+# Transfer Buffer
+
+## $10\times$ Transfer Buffer ($1\ \mathrm{L}$)
+
+
+
+| Ingredient | Concentration | Molecular weight | Amount |
+|:---|---:|---:|---:|
+| $\mathrm{Tris}$ | $250\ \mathrm{mM}$ | $121.136\ \mathrm{g/mol}$ | $30.28\ \mathrm{g}$ |
+| $\mathrm{Glycine}$ | $1900\ \mathrm{mM}$ | $75.067\ \mathrm{g/mol}$ | $142.63\ \mathrm{g}$ |
+
+
+
+- Add $20\%$ methanol fresh when preparing $1\times$ transfer buffer; do not add methanol to the $10\times$ stock.
+- For proteins larger than $80\ \mathrm{kDa}$, add $0.1\%$ SDS.
+
+To prepare $1\ \mathrm{L}$ of $1\times$ transfer buffer:
+
+- $700\ \mathrm{mL}$ di$\mathrm{H_2O}$
+- $100\ \mathrm{mL}$ $10\times$ transfer buffer
+- $200\ \mathrm{mL}$ methanol
+
+
+# Native Buffer
+
+## $10\times$ Native Buffer ($1\ \mathrm{L}$)
+
+
+
+| Ingredient | Molecular weight | Concentration | Amount |
+|:---|---:|---:|---:|
+| $\mathrm{NaH_2PO_4}$ | $119.98\ \mathrm{g/mol}$ | $500\ \mathrm{mM}$ | $60.0\ \mathrm{g}$ |
+| $\mathrm{NaCl}$ | $58.44\ \mathrm{g/mol}$ | $5\ \mathrm{M}$ | $292.2\ \mathrm{g}$ |
+
+
+
+Adjust to $\mathrm{pH}\ 8.0$ and bring the final volume to $1\ \mathrm{L}$.
+
+## $5\times$ Native Buffer ($1\ \mathrm{L}$)
+
+
+
+| Ingredient | Molecular weight | Concentration | Amount |
+|:---|---:|---:|---:|
+| $\mathrm{NaH_2PO_4}$ | $119.98\ \mathrm{g/mol}$ | $250\ \mathrm{mM}$ | $30.0\ \mathrm{g}$ |
+| $\mathrm{NaCl}$ | $58.44\ \mathrm{g/mol}$ | $2.5\ \mathrm{M}$ | $146.1\ \mathrm{g}$ |
+
+
+
+Adjust to $\mathrm{pH}\ 8.0$ and bring the final volume to $1\ \mathrm{L}$.
+
+# TBST Buffer
+
+## $10\times$ TBS ($1\ \mathrm{L}$)
+
+
+
+| Ingredient | Concentration | Molecular weight | Amount |
+|:---|---:|---:|---:|
+| $\mathrm{Tris}$, $\mathrm{pH}\ 7.5$ | $200\ \mathrm{mM}$ | $121.136\ \mathrm{g/mol}$ | $24.24\ \mathrm{g}$ |
+| $\mathrm{NaCl}$ | $1500\ \mathrm{mM}$ | $58.44\ \mathrm{g/mol}$ | $87.66\ \mathrm{g}$ |
+
+
+
+Add Tween 20 fresh when preparing $1\times$ TBST; ***do not add it to the $10\times$ stock ("TBS buffer").***
+
+To prepare $1\ \mathrm{L}$ of $1\times$ TBST:
+
+- $100\ \mathrm{mL}$ $10\times$ TBS
+- $899\ \mathrm{mL}$ di$\mathrm{H_2O}$
+- $1\ \mathrm{mL}$ Tween 20
+
+# Blocking Buffer
+
+- $5\%$ nonfat milk
+
+***OR***
+
+- $1\%$ BSA
+
+# PBS
+
+## $10\times$ PBS ($1\ \mathrm{L}$)
+
+
+
+| Ingredient | Amount |
+|:---|---:|
+| ${Na_2HPO_4}$ | $14.4\ \mathrm{g}$ |
+| ${KH_2PO_4}$ | $2.4\ \mathrm{g}$ |
+| ${NaCl}$ | $80\ \mathrm{g}$ |
+| ${KCl}$ | $2\ \mathrm{g}$ |
+
+
+
+Adjust to $\mathrm{pH}\ 7.4$ and bring the final volume to $1\ \mathrm{L}$.
+
+## $10\times$ PBS ($500\ \mathrm{mL}$)
+
+
+
+| Ingredient | Amount |
+|:---|---:|
+| $\mathrm{Na_2HPO_4}$ | $7.2\ \mathrm{g}$ |
+| $\mathrm{KH_2PO_4}$ | $1.2\ \mathrm{g}$ |
+| $\mathrm{NaCl}$ | $40\ \mathrm{g}$ |
+| $\mathrm{KCl}$ | $1\ \mathrm{g}$ |
+
+
+
+Adjust to $\mathrm{pH}\ 7.4$ and bring the final volume to $500\ \mathrm{mL}$.
+
+# SDS Loading Dye
+
+
+## $6\times$ Loading Buffer ($15\ \mathrm{mL}$)
+
+
+
+| Reagent | Final concentration | Amount |
+|:---|---:|---:|
+| $\mathrm{Tris}$, $\mathrm{pH}\ 6.8$ | $375\ \mathrm{mM}$ | $1.875\ \mathrm{mL}$ |
+| $\mathrm{SDS}$ | $6\%$ | $0.9\ \mathrm{g}$ |
+| $\mathrm{Glycerol}$ | $60\%$ | $9\ \mathrm{mL}$ |
+| $\mathrm{Bromophenol\ blue}$ | $0.12\%$ | $0.018\ \mathrm{g}$ |
+| $\beta$-mercaptoethanol | $30\%$ | $4.5\ \mathrm{mL}$ |
+
+
+
+## $5\times$ Loading Buffer ($15\ \mathrm{mL}$)
+
+
+
+| Reagent | Stock concentration | Amount |
+|:---|---:|---:|
+| $\mathrm{Tris}$, $\mathrm{pH}\ 6.8$ | $1\ \mathrm{M}$ | $3.75\ \mathrm{mL}$ |
+| $\mathrm{SDS}$ | $20\%$ | $3.00\ \mathrm{mL}$ |
+| $\mathrm{Glycerol}$ | — | $4.50\ \mathrm{mL}$ |
+| $\mathrm{Bromophenol\ blue}$ | — | $9\ \mathrm{mg}$ |
+| $\beta$-mercaptoethanol | — | $2.40\ \mathrm{mL}$ |
+| di$\mathrm{H_2O}$ or Milli-Q $\mathrm{H_2O}$ | — | $1.35\ \mathrm{mL}$ |
+
+
+
+The calculated reagent volume is $6.75 + 4.50 + 2.40 = 13.65\ \mathrm{mL}$;
+
+Leaving approximately $1.35\ \mathrm{mL}$ $\mathrm{H_2O}$ to reach $15\ \mathrm{mL}$.
+
+# SDS Running Buffer
+
+## $10\times$ SDS Running Buffer ($1\ \mathrm{L}$)
+
+
+
+| Ingredient | Concentration | Molecular weight | Amount |
+|:---|---:|---:|---:|
+| $\mathrm{Tris}$ | $250\ \mathrm{mM}$ | $121.4\ \mathrm{g/mol}$ | $30.2\ \mathrm{g}$ |
+| $\mathrm{Glycine}$ | $1920\ \mathrm{mM}$ | $75.066\ \mathrm{g/mol}$ | $144.1\ \mathrm{g}$ |
+| $\mathrm{SDS}$ | $1\%$ | — | $10\ \mathrm{g}$ |
+
+
+
+Dissolve the ingredients and bring the final volume to $1\ \mathrm{L}$.
+
+- Tris rounded to $30\ \mathrm{g}$.
+- Glycine rounded to $144\ \mathrm{g}$.
+- SDS: $10\ \mathrm{g}$.
+- $20\%$ SDS solution: $10\ \mathrm{g} = 50\ \mathrm{mL}$.
+
+# Coomassie Stain
+
+- $50\%$ methanol
+- $0.1\%$ Coomassie blue
+- $10\%$ glacial acetic acid
+- Bring to the final volume with $\mathrm{H_2O}$.
+
+## $500\ \mathrm{mL}$ Preparation
+
+
+
+| Reagent | Amount |
+|:---|---:|
+| $\mathrm{Methanol}$ | $250\ \mathrm{mL}$ |
+| $\mathrm{Coomassie\ blue}$ | $0.5\ \mathrm{g}$ |
+| $\mathrm{Glacial\ acetic\ acid}$ | $50\ \mathrm{mL}$ |
+| $\mathrm{H_2O}$ | $200\ \mathrm{mL}$ |
+
+
+
+# Destaining Buffer
+
+- $10\%$ ethanol
+- $10\%$ glacial acetic acid
+- Bring to the final volume with $\mathrm{H_2O}$.
+
+## $500\ \mathrm{mL}$ Preparation
+
+
+
+| Reagent | Amount |
+|:---|---:|
+| $\mathrm{Ethanol}$ | $50\ \mathrm{mL}$ |
+| $\mathrm{Glacial\ acetic\ acid}$ | $50\ \mathrm{mL}$ |
+| $\mathrm{H_2O}$ | $400\ \mathrm{mL}$ |
+
+
+
+# Acetic Acid for Gel Storage
+
+Use $5\%$ acetic acid to store SDS gels.
+
+# SDS-PAGE Gel Tris Solutions
+
+
+
+| Reagent | Concentration | Molecular weight | Amount for $1\ \mathrm{L}$ |
+|:---|---:|---:|---:|
+| $\mathrm{Tris}$, $\mathrm{pH}\ 8.8$ | $1.5\ \mathrm{M}$ | $121.14\ \mathrm{g/mol}$ | $181.71\ \mathrm{g}$ |
+| $\mathrm{Tris}$, $\mathrm{pH}\ 6.8$ | $1\ \mathrm{M}$ | $121.14\ \mathrm{g/mol}$ | $121.14\ \mathrm{g}$ |
+
+
+
+- For $1.5\ \mathrm{M}$ Tris, $\mathrm{pH}\ 8.8$: $18.171\ \mathrm{g}/100\ \mathrm{mL}$ or $90.855\ \mathrm{g}/500\ \mathrm{mL}$.
+- For $1\ \mathrm{M}$ Tris, $\mathrm{pH}\ 6.8$: $12.114\ \mathrm{g}/100\ \mathrm{mL}$ dd$\mathrm{H_2O}$.
+
+# Ammonium Persulfate
+
+Prepare $10\%$ ammonium persulfate (APS) by dissolving $0.1\ \mathrm{g}$ APS in $1.0\ \mathrm{mL}$ $\mathrm{H_2O}$.
+
+# BSA Solutions
+
+- BSA for DARTS: $0.5\ \mathrm{\mu g/mL}$
+- BSA for PGRN: $100\ \mathrm{mg/mL}$
+- Prepare $20\ \mathrm{\mu L}$ aliquots for each loading or use.
+
+# Ponceau S Stain
+
+- $0.2\%\ \mathrm{w/v}$ Ponceau S
+- $5\ \mathrm{mL}$ glacial acetic acid
+- Bring to the intended final volume with $\mathrm{H_2O}$.
+
+Note: "$50\ \mathrm{mM}$ $\mathrm{NaOH}$ (around 5 pills; $40\ \mathrm{g/mol}$), $1\ \mathrm{g}/500\ \mathrm{mL}$."
+
+# PGRN Imidazole Buffer
+
+## $3\ \mathrm{M}$ Imidazole Buffer, $\mathrm{pH}\ 6.0$ ($100\ \mathrm{mL}$)
+
+Final composition:
+
+- $3\ \mathrm{M}$ imidazole
+- $500\ \mathrm{mM}$ $\mathrm{NaCl}$
+- $20\ \mathrm{mM}$ sodium phosphate buffer, $\mathrm{pH}\ 6.0$
+
+Preparation:
+
+1. Add $20.6\ \mathrm{g}$ imidazole, $8.77\ \mathrm{mL}$ Stock Solution A ($10\times$), and $1.23\ \mathrm{mL}$ Stock Solution B ($10\times$) to approximately $80\ \mathrm{mL}$ di$\mathrm{H_2O}$.
+2. Mix thoroughly and adjust to $\mathrm{pH}\ 6.0$ with $\mathrm{HCl}$ or $\mathrm{NaOH}$ as necessary.
+3. Bring the final volume to $100\ \mathrm{mL}$ with di$\mathrm{H_2O}$.
+4. If a precipitate forms, heat the solution until it dissolves.
+5. Store at room temperature.
+
+## Stock Solution A ($10\times$; $1\ \mathrm{L}$)
+
+Final composition:
+
+- $200\ \mathrm{mM}$ sodium phosphate, monobasic ($\mathrm{NaH_2PO_4}$)
+- $5\ \mathrm{M}$ $\mathrm{NaCl}$
+
+Preparation:
+
+1. Dissolve $27.6\ \mathrm{g}$ monobasic sodium phosphate and $292.9\ \mathrm{g}$ $\mathrm{NaCl}$ in $800\ \mathrm{mL}$ di$\mathrm{H_2O}$.
+2. Mix thoroughly and bring the final volume to $1\ \mathrm{L}$ with di$\mathrm{H_2O}$.
+3. Store at room temperature.
+
+## Stock Solution B ($10\times$; $1\ \mathrm{L}$)
+
+Final composition:
+
+- $200\ \mathrm{mM}$ sodium phosphate, dibasic ($\mathrm{Na_2HPO_4}$)
+- $5\ \mathrm{M}$ $\mathrm{NaCl}$
+
+Preparation:
+
+1. Dissolve $28.4\ \mathrm{g}$ dibasic sodium phosphate and $292.9\ \mathrm{g}$ $\mathrm{NaCl}$ in $800\ \mathrm{mL}$ di$\mathrm{H_2O}$.
+2. Mix thoroughly and bring the final volume to $1\ \mathrm{L}$ with di$\mathrm{H_2O}$.
+3. Store at room temperature.
+
+# Additional $5\times$ Loading Dye Note
+
+- $10\%$ SDS
+- $20\%$ glycerol
+- $0.2\ \mathrm{M}$ Tris, $\mathrm{pH}\ 6.8$
+- $0.1\%$ bromophenol blue
+- $10\%$ $\beta$-mercaptoethanol
