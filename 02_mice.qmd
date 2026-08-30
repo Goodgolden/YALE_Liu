@@ -1,0 +1,450 @@
+---
+title: "JAX Parkinson Disease Mouse Strain Numbers"
+format: html
+editor: visual
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(chromote)
+library(rvest)
+library(dplyr)
+library(stringr)
+library(tibble)
+library(readr)
+```
+
+```{r}
+jax_url <- paste0("https://mice.jax.org/?linkBuilder=1",
+                  "&stocktype=",
+                  "&diseaseterm=",
+                  "&straingroup=",
+                  "&researcharea=Neurobiology%20Research",
+                  "&researcharea2=Parkinson%27s%20Disease",
+                  "&researcharea3=",
+                  "&strainstatus=",
+                  "&genesymbol=",
+                  "&allelesymbol=",
+                  "&geneticbackground=")
+
+b <- ChromoteSession$new()
+
+get_html <- function(browser) {
+  x <- browser$Runtime$evaluate("document.documentElement.outerHTML")
+  x$result$value
+}
+```
+
+```{r}
+b$Page$navigate(jax_url)
+Sys.sleep(10)
+
+for (i in 1:500) {
+  b$Runtime$evaluate("window.scrollTo(0, document.body.scrollHeight)")
+  Sys.sleep(1)
+}
+
+page <- read_html(get_html(b))
+```
+
+```{r}
+strain_number <- page %>%
+  html_elements("a") %>%
+  html_attr("href") %>%
+  na.omit() %>%
+  str_extract("(?<=/strain/)[0-9]{5,6}") %>%
+  na.omit() %>%
+  unique()
+
+pd_mice <- tibble(strain_number = strain_number) %>%
+  arrange(strain_number)
+
+pd_mice
+```
+
+```{r}
+cat("Total Parkinson disease mouse strains:",
+    nrow(pd_mice), "\n")
+
+write_csv(pd_mice,
+          "JAX_Parkinson_Disease_Strain_Numbers.csv")
+
+b$close()
+```
+
+
+
+```{r setup, message=FALSE, warning=FALSE}
+library(chromote)
+library(rvest)
+library(dplyr)
+library(purrr)
+library(stringr)
+library(tibble)
+library(readr)
+```
+
+```{r}
+jax_url <- paste0(
+  "https://mice.jax.org/?linkBuilder=1",
+  "&stocktype=",
+  "&diseaseterm=",
+  "&straingroup=",
+  "&researcharea=Neurobiology%20Research",
+  "&researcharea2=Parkinson%27s%20Disease",
+  "&researcharea3=",
+  "&strainstatus=",
+  "&genesymbol=",
+  "&allelesymbol=",
+  "&geneticbackground="
+)
+b <- ChromoteSession$new()
+get_html <- function(browser) {
+  x <- browser$Runtime$evaluate(
+    "document.documentElement.outerHTML"
+  )
+  x$result$value
+}
+```
+
+```{r}
+b$Page$navigate(jax_url)
+Sys.sleep(10)
+for (i in 1:50) {
+  b$Runtime$evaluate(
+    "window.scrollTo(0, document.body.scrollHeight)"
+  )
+  Sys.sleep(1)
+}
+search_page <- read_html(get_html(b))
+strain_links <- search_page %>%
+  html_elements("a") %>%
+  html_attr("href") %>%
+  na.omit()
+strain_numbers <- strain_links %>%
+  str_extract("(?<=/strain/)[0-9]+") %>%
+  na.omit() %>%
+  unique()
+mouse_links <- tibble(
+  strain_number = strain_numbers,
+  jax_url = paste0(
+    "https://www.jax.org/strain/",
+    strain_numbers
+  )
+)
+cat("Strains found:",
+    nrow(mouse_links), "\n")
+mouse_links
+```
+
+```{r}
+extract_field <- function(text,
+                          start_term,
+                          end_terms,
+                          max_chars = 5000) {
+  if (is.na(text) || text == "") {
+    return(NA_character_)
+  }
+  end_pattern <- paste(
+    end_terms,
+    collapse = "|"
+  )
+  pattern <- paste0(
+    start_term,
+    "\\s*:?\\s*",
+    "(.{0,", max_chars, "}?)",
+    "(?=", end_pattern, "|$)"
+  )
+  x <- str_match(
+    text,
+    regex(
+      pattern,
+      ignore_case = TRUE,
+      dotall = TRUE
+    )
+  )
+  if (is.na(x[1, 2])) {
+    return(NA_character_)
+  }
+  str_squish(x[1, 2])
+}
+
+```
+
+```{r}
+extract_mouse <- function(strain_number,
+                          url,
+                          browser,
+                          wait = 4) {
+  cat("Reading:", strain_number, "\n")
+  tryCatch({
+    browser$Page$navigate(url)
+    Sys.sleep(wait)
+    for (i in 1:8) {
+      browser$Runtime$evaluate(
+        "window.scrollTo(0, document.body.scrollHeight)"
+      )
+      Sys.sleep(0.5)
+    }
+    page <- read_html(
+      get_html(browser)
+    )
+    full_text <- page %>%
+      html_element("body") %>%
+      html_text2() %>%
+      str_squish()
+    strain_name <- page %>%
+      html_element("h1") %>%
+      html_text2() %>%
+      str_squish()
+    rrid <- str_extract(
+      full_text,
+      regex(
+        "RRID\\s*:?\\s*IMSR[_\\s]JAX\\s*:?\\s*[0-9]+",
+        ignore_case = TRUE
+      )
+    )
+    common_name <- extract_field(
+      full_text, "Common Name",
+      c("Cryo Recovery", "Live Mouse",
+        "Frozen Embryo", "#[0-9]{5,6}"), 500
+    )
+    summary <- extract_field(
+      full_text, "Common Name\\s*:?\\s*.{1,500}?",
+      c("Cryo Recovery", "Live Mouse",
+        "Frozen Embryo"), 2000
+    )
+    product_type <- extract_field(
+      full_text, "Product Type",
+      c("Quantity", "Genotype", "Sex",
+        "Age", "Price", "Availability"), 500
+    )
+    genotype <- extract_field(
+      full_text, "Genotype",
+      c("Sex", "Age", "Price",
+        "Availability", "You Will Receive"), 2000
+    )
+    sex <- extract_field(
+      full_text, "Sex",
+      c("Age", "Price", "Availability"), 500
+    )
+    age <- extract_field(
+      full_text, "Age",
+      c("Price", "Availability"), 1000
+    )
+    price <- str_extract(
+      full_text,
+      regex(
+        "Price\\s*\\$[0-9,.]+",
+        ignore_case = TRUE
+      )
+    )
+    availability <- extract_field(
+      full_text, "Availability",
+      c("Preorder Now", "Order Now",
+        "Get a Quote", "Details",
+        "How it's Made"), 3000
+    )
+    strain_highlights <- extract_field(
+      full_text, "Strain Highlights",
+      c("Donating Investigator",
+        "Originating Article",
+        "Detailed Description"), 3000
+    )
+    donating_investigators <- extract_field(
+      full_text, "Donating Investigator\\(s\\)",
+      c("Originating Article",
+        "Browse References",
+        "Detailed Description"), 2000
+    )
+    detailed_description <- extract_field(
+      full_text, "Detailed Description",
+      c("Development", "Genetics"), 10000
+    )
+    development <- extract_field(
+      full_text, "Development",
+      c("Genetics", "How it's Used",
+        "References"), 10000
+    )
+    genetics <- extract_field(
+      full_text, "Genetics",
+      c("How it's Used", "References",
+        "Husbandry", "Legal"), 12000
+    )
+    genetic_background <- extract_field(
+      genetics, "Genetic Background",
+      c("Generation", "Allele Symbol"), 2000
+    )
+    generation <- extract_field(
+      genetics, "Generation",
+      c("Allele Symbol"), 1000
+    )
+    allele_symbol <- extract_field(
+      genetics, "Allele Symbol",
+      c("Allele Name"), 1000
+    )
+    allele_name <- extract_field(
+      genetics, "Allele Name",
+      c("Gene Symbol"), 1000
+    )
+    gene_symbol <- extract_field(
+      genetics, "Gene Symbol",
+      c("Allele Type"), 500
+    )
+    allele_type <- extract_field(
+      genetics, "Allele Type",
+      c("Gene Name"), 500
+    )
+    gene_name <- extract_field(
+      genetics, "Gene Name",
+      c("Gene Synonym", "Site of Expression"), 1000
+    )
+    gene_synonyms <- extract_field(
+      genetics, "Gene Synonym\\(s\\)",
+      c("Site of Expression",
+        "Expressed Gene"), 2000
+    )
+    site_of_expression <- extract_field(
+      genetics, "Site of Expression",
+      c("Expressed Gene",
+        "Strain of Origin"), 2000
+    )
+    expressed_genes <- extract_field(
+      genetics, "Expressed Gene\\(s\\)",
+      c("Strain of Origin",
+        "Chromosome"), 2000
+    )
+    strain_of_origin <- extract_field(
+      genetics, "Strain of Origin",
+      c("Chromosome"), 1000
+    )
+    chromosome <- extract_field(
+      genetics, "Chromosome",
+      c("Molecular Note"), 500
+    )
+    molecular_note <- extract_field(
+      genetics, "Molecular Note",
+      c("General Note",
+        "Mutations Made By",
+        "How it's Used"), 6000
+    )
+    general_note <- extract_field(
+      genetics, "General Note",
+      c("Mutations Made By",
+        "How it's Used"), 3000
+    )
+    mutations_made_by <- extract_field(
+      genetics, "Mutations Made By",
+      c("How it's Used",
+        "References"), 2000
+    )
+    references <- extract_field(
+      full_text, "References",
+      c("Husbandry", "Legal",
+        "Related Strains",
+        "When using"), 12000
+    )
+    tibble(
+      strain_number = strain_number,
+      strain_name = strain_name,
+      rrid = rrid,
+      common_name = common_name,
+      summary = summary,
+      product_type = product_type,
+      genotype = genotype,
+      sex = sex,
+      age = age,
+      price = price,
+      availability = availability,
+      strain_highlights = strain_highlights,
+      donating_investigators = donating_investigators,
+      detailed_description = detailed_description,
+      development = development,
+      genetic_background = genetic_background,
+      generation = generation,
+      allele_symbol = allele_symbol,
+      allele_name = allele_name,
+      gene_symbol = gene_symbol,
+      allele_type = allele_type,
+      gene_name = gene_name,
+      gene_synonyms = gene_synonyms,
+      site_of_expression = site_of_expression,
+      expressed_genes = expressed_genes,
+      strain_of_origin = strain_of_origin,
+      chromosome = chromosome,
+      molecular_note = molecular_note,
+      general_note = general_note,
+      mutations_made_by = mutations_made_by,
+      references = references,
+      genetics_full = genetics,
+      full_text = full_text,
+      jax_url = url
+    )
+  }, error = function(e) {
+    message(
+      "ERROR ", strain_number,
+      ": ", conditionMessage(e)
+    )
+    tibble(
+      strain_number = strain_number,
+      strain_name = NA_character_,
+      rrid = NA_character_,
+      common_name = NA_character_,
+      summary = NA_character_,
+      product_type = NA_character_,
+      genotype = NA_character_,
+      sex = NA_character_,
+      age = NA_character_,
+      price = NA_character_,
+      availability = NA_character_,
+      strain_highlights = NA_character_,
+      donating_investigators = NA_character_,
+      detailed_description = NA_character_,
+      development = NA_character_,
+      genetic_background = NA_character_,
+      generation = NA_character_,
+      allele_symbol = NA_character_,
+      allele_name = NA_character_,
+      gene_symbol = NA_character_,
+      allele_type = NA_character_,
+      gene_name = NA_character_,
+      gene_synonyms = NA_character_,
+      site_of_expression = NA_character_,
+      expressed_genes = NA_character_,
+      strain_of_origin = NA_character_,
+      chromosome = NA_character_,
+      molecular_note = NA_character_,
+      general_note = NA_character_,
+      mutations_made_by = NA_character_,
+      references = NA_character_,
+      genetics_full = NA_character_,
+      full_text = NA_character_,
+      jax_url = url
+    )
+  })
+}
+```
+
+```{r}
+mouse_data <- pmap_dfr(
+  mouse_links,
+  ~extract_mouse(
+    strain_number = ..1,
+    url = ..2,
+    browser = b,
+    wait = 4
+  )
+)
+cat("Total Parkinson strains:",
+    nrow(mouse_data), "\n")
+View(mouse_data)
+```
+
+```{r}
+write_csv(
+  mouse_data,
+  "JAX_Parkinson_Disease_All_Strains.csv"
+)
+b$close()
+```
+```
+

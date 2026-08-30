@@ -1,0 +1,1521 @@
+---
+title: "01_mice_info"
+format: html
+editor: visual
+---
+
+## JAXMice PARKINSON'S DISEASE MOUSE STRAIN SCRAPER
+
+
+```{r}
+
+## Output: data/JAX_Parkinson_Mouse_Strains.csv
+
+library(chromote)
+library(rvest)
+library(dplyr)
+library(purrr)
+library(stringr)
+library(tibble)
+library(readr)
+library(tidyr)
+
+## 1. create folder ---------------
+if (!dir.exists("data_raw")) dir.create("data_raw")
+
+
+## 2. JAXMice Parkinson Disease url -------------------
+jax_url <- paste0("https://mice.jax.org/?",
+                  "linkBuilder=1",
+                  "&stocktype=",
+                  "&diseaseterm=",
+                  "&straingroup=",
+                  "&researcharea=Neurobiology%20Research",
+                  "&researcharea2=Parkinson%27s%20Disease",
+                  "&researcharea3=",
+                  "&strainstatus=",
+                  "&genesymbol=",
+                  "&allelesymbol=",
+                  "&geneticbackground=")
+cat("JAX search URL:\n", jax_url, "\n\n")
+
+## 3. Chrome scrapping -----------------
+b <- ChromoteSession$new()
+b$Page$navigate(jax_url)
+cat("Loading JAX website...\n")
+Sys.sleep(10)
+
+## 4. functions for rendered HTML
+
+
+get_html <- function(browser) {
+  browser$Runtime$evaluate("document.documentElement.outerHTML")$result$value
+
+}
+
+## 5. scroll page to load dynamic content
+
+for (i in 1:20) {
+  b$Runtime$evaluate("window.scrollTo(0,
+                     document.body.scrollHeight)")
+  
+  Sys.sleep(1)
+}
+
+## 6. reading page
+
+html <- get_html(b)
+
+page <- read_html(html)
+
+page_text <- page %>%
+  html_text2() %>%
+  str_squish()
+
+cat("\nFirst 1000 characters from page:\n\n",
+  substr(page_text, 1, 5000),
+  "\n\n")
+
+## 7. extraction
+
+nodes <- page %>%
+  html_elements("a")
+
+links <- tibble(text = nodes %>%
+                  html_text2() %>%
+                  str_squish(),
+                url = nodes %>%
+                  html_attr("href")) %>%
+  filter(!is.na(url),
+         url != "") %>%
+  distinct()
+
+cat("Total links detected:",
+    nrow(links),
+    "\n")
+
+## 8. JAXMice strain link
+
+mouse_links_raw <- links %>%
+  filter(str_detect(paste(text, url),
+                    regex("datasheet|strain|stock|jaxmice",
+                          ignore_case = TRUE)))
+cat("\nPotential mouse links:",
+    nrow(mouse_links_raw),
+    "\n\n")
+print(mouse_links_raw,
+      n = 250)
+write_csv(mouse_links_raw,
+          here::here("data_raw", 
+                     "JAX_Parkinson_links_RAW.csv"))
+
+## 9. standardized url
+
+mouse_links <- mouse_links_raw %>%
+  mutate(jax_url = case_when(str_starts(url, "https://") ~ url,
+                             str_starts(url, "http://") ~ url,
+                             str_starts(url, "//") ~ paste0("https:", url),
+                             str_starts(url, "/") ~ paste0("https://mice.jax.org", url),
+                             TRUE ~ paste0("https://mice.jax.org/", url))) %>%
+  filter(!str_detect(jax_url,
+                     regex("search|login|contact|cart",
+                           ignore_case = TRUE))) %>%
+  distinct(jax_url,
+           .keep_all = TRUE)
+cat("\nUnique potential strain pages:",
+  nrow(mouse_links),
+  "\n")
+```
+
+## The functions
+
+```{r "functions"}
+## 10. functions to extract text
+extract_section <- function(text,
+                            start_term,
+                            end_terms,
+                            max_chars = 2000) {
+  
+  if (is.na(text) || text == "") {return(NA_character_)}
+  end_pattern <- paste(end_terms,
+                       collapse = "|")
+  pattern <- paste0(start_term,
+                    "\\s*:?\\s*",
+                    "(.{1,", max_chars, "}?)",
+                    "(?=",
+                    end_pattern,
+                    "|$)" )
+  result <- str_match(text,
+                          regex(pattern,
+                            ignore_case = TRUE,
+                            dotall = TRUE))
+  
+  if (nrow(result) == 0 || is.na(result[1, 2])) return(NA_character_)
+  result <- str_squish(result[1, 2])
+  return(result)
+}
+
+
+## read and extract mouse text
+extract_mouse <- function(url,
+                          browser,
+                          wait = 3) {
+  cat("Reading:\n", url, "\n")
+  tryCatch({
+    ## to navigate
+    browser$Page$navigate(url)
+    Sys.sleep(wait)
+    ## to scroll down
+    browser$Runtime$evaluate("window.scrollTo(0, document.body.scrollHeight)")
+    Sys.sleep(wait)
+    ## rendered HTML
+    html <- get_html(browser)
+    page <- read_html(html)
+    h1 <- page %>%
+      html_element("h1")
+    if (length(h1) > 0) {
+      strain_name <- h1 %>%
+        html_text2() %>%
+        str_squish()
+      } else {
+      strain_name <- page %>%
+        html_element("title") %>%
+        html_text2() %>%
+        str_squish()
+    }
+    full_text <- page %>%
+      html_text2() %>%
+      str_squish()
+    stock_match <- str_extract(full_text,
+                               regex("(Stock\\s*(No\\.?|Number)?|JR)\\s*[:#]?\\s*[0-9]{5,6}",
+                                     ignore_case = TRUE))
+    stock_number <- str_extract(stock_match,
+                                "[0-9]{5,6}")
+    
+    common_uses <- extract_section(full_text,
+                                   "Common Uses",
+                                   c("Genetic Background",
+                                     "Development",
+                                     "Breeding",
+                                     "Phenotype",
+                                     "Availability",
+                                     "Technical Support"), 1500)
+    
+    genetic_background <- extract_section(full_text,
+                                          "Genetic Background",
+                                          c("Common Uses",
+                                            "Development",
+                                            "Breeding",
+                                            "Phenotype",
+                                            "Availability",
+                                            "Technical Support"), 1000)
+    description <- extract_section(full_text,
+                                   "Description",
+                                   c("Development",
+                                     "Phenotype",
+                                     "Breeding",
+                                     "Expression",
+                                     "Molecular",
+                                     "References"),
+                                   3000)
+    
+    development <- extract_section(full_text,
+                                   "Development",
+                                   c("Phenotype",
+                                     "Breeding",
+                                     "Expression",
+                                     "Molecular",
+                                     "References",
+                                     "Technical Support"),
+                                   3000)
+    
+    phenotype <- extract_section(
+      full_text,
+      "Phenotype",
+      c("Development",
+        "Breeding",
+        "Expression",
+        "Molecular",
+        "References",
+        "Technical Support"),
+      4000)
+    
+    breeding <- extract_section(
+      full_text,
+      "Breeding",
+      c("Development",
+        "Phenotype",
+        "Expression",
+        "Molecular",
+        "References",
+        "Technical Support"),
+      2500)
+    
+    tibble(stock_number = stock_number,
+           strain_name = strain_name,
+           genetic_background = genetic_background,
+           common_uses = common_uses,
+           description = description,
+           phenotype = phenotype,
+           development = development,
+           breeding = breeding,
+           full_text = full_text,
+           jax_url =url)
+  }, 
+  error = function(e) {
+    message("ERROR: ",
+            conditionMessage(e))
+    
+    tibble(stock_number = NA_character_,
+           strain_name = NA_character_,
+           genetic_background = NA_character_,
+           common_uses = NA_character_,
+           description = NA_character_,
+           phenotype = NA_character_,
+           development = NA_character_,
+           breeding = NA_character_,
+           full_text = NA_character_,
+           jax_url = url)
+  })
+}
+```
+
+
+
+```{r}
+## all mouse pages in the website
+cat("\nBeginning extraction of individual mouse pages...\n")
+mouse_data <- map_dfr(mouse_links$jax_url,
+                      ~extract_mouse(url = .x,
+                                     browser = b,
+                                     wait = 3))
+cat("\nMouse pages processed:",
+    nrow(mouse_data), "\n")
+mouse_data <- mouse_data %>%
+  filter(!is.na(stock_number) |
+    str_detect(full_text,
+      regex("mouse|mice|strain|stock",
+        ignore_case = TRUE)))
+```
+
+
+
+```{r}
+pd_genes <- c("Gba1", "Snca",
+              "Lrrk2",
+              "Pink1", "Prkn", "Park7",
+              "Vps35", "Uchl1",
+              "Atp13a2", "Rab29", "Gak")
+find_pd_genes <- function(x) {
+  if (is.na(x)) {return(NA_character_)}
+  found <- pd_genes[map_lgl(pd_genes,
+                            ~str_detect(x,
+                                        regex(paste0("\\b", .x, "\\b"),
+                                              ignore_case = TRUE)))]
+  if (length(found) == 0) {return(NA_character_)}
+  paste(unique(found),
+        collapse = "; ")
+}
+
+mouse_data <- mouse_data %>%
+  mutate(gene = map_chr(full_text,
+                        find_pd_genes))
+
+## alpha synuclein related strains
+mouse_data <- mouse_data %>%
+  mutate(alpha_synuclein_related = case_when(str_detect(
+    full_text,
+    regex("alpha.?synuclein|α.?synuclein|Snca",
+          ignore_case = TRUE)) ~ "YES",
+    TRUE ~ "NO"))
+```
+
+
+## GD / GBA1 and PD model
+
+```{r}
+mouse_data <- mouse_data %>%
+  mutate(gaucher_related = case_when(
+      str_detect(full_text,
+        regex(paste("Gba1",
+            "GCase",
+            "glucocerebrosidase",
+            "glucosylceramide",
+            "glucosylsphingosine",
+            "Gaucher", sep = "|"),
+          ignore_case = TRUE)) ~ "YES",
+      TRUE ~ "NO"))
+
+mouse_data <- mouse_data %>%
+  mutate(pd_model_type = case_when(str_detect(full_text,
+        regex("Gba1|GCase|glucocerebrosidase|Gaucher",
+          ignore_case = TRUE)) ~
+        "GBA1 / Gaucher-associated model",
+      str_detect(full_text, regex("Snca|alpha.?synuclein|α.?synuclein",
+          ignore_case = TRUE)) ~ "Alpha-synuclein model",
+      str_detect(full_text,
+        regex("Lrrk2",
+          ignore_case = TRUE)) ~ "LRRK2 model",
+      str_detect(full_text,
+        regex("Pink1",
+          ignore_case = TRUE)) ~ "PINK1 model",
+      str_detect(full_text,
+        regex("Prkn|Parkin",
+          ignore_case = TRUE)) ~ "Parkin model",
+      str_detect(full_text,
+                 regex("Park7|DJ.?1",
+          ignore_case = TRUE)) ~ "DJ-1 model",
+      TRUE ~ "Other Parkinson-related model"))
+
+mouse_data <- mouse_data %>%
+  mutate(mouse_summary = paste0(if_else(!is.na(gene),
+        paste0("Gene: ", gene, ". "), ""),
+      if_else(!is.na(genetic_background),
+        paste0("Background: ",
+          genetic_background,
+          ". "), ""),
+      if_else(!is.na(common_uses),
+        paste0("Common uses: ", common_uses, ". "), ""),
+      if_else(!is.na(phenotype), paste0("Phenotype: ", phenotype), "")),
+    mouse_summary = str_squish(mouse_summary))
+
+View(mouse_data)
+
+jax_parkinson_mice <- mouse_data %>%
+  select(stock_number,
+    strain_name,
+    gene,
+    pd_model_type,
+    gaucher_related,
+    alpha_synuclein_related,
+    genetic_background,
+    common_uses,
+    description,
+    phenotype,
+    development,
+    breeding,
+    # jax_url,
+    mouse_summary) %>%
+  distinct(stock_number,
+    # jax_url,
+    .keep_all = TRUE) %>%
+  arrange(desc(gaucher_related),
+    gene,
+    stock_number)
+```
+
+
+## Final results
+
+```{r}
+cat("FINAL NUMBER OF STRAINS:",
+    nrow(jax_parkinson_mice),
+    "\n")
+print(jax_parkinson_mice %>%
+        select(stock_number,
+               strain_name,
+               gene,
+               pd_model_type,
+               gaucher_related),
+      n = Inf)
+cat("\nPD model types:\n")
+print(jax_parkinson_mice %>%
+        count(pd_model_type,
+              sort = TRUE))
+cat("\nGaucher-related models:\n")
+print(jax_parkinson_mice %>%
+        filter(gaucher_related == "YES") %>%
+        select(stock_number,
+               strain_name,
+               gene,
+               pd_model_type))
+write_csv(jax_parkinson_mice, 
+          "data_raw/JAX_Parkinson_Mouse_Strains.csv",
+          na = "")
+write_csv(mouse_data, 
+          "data_raw/JAX_Parkinson_Mouse_Strains_RAW.csv",
+          na = "")
+gaucher_pd_mice <- jax_parkinson_mice %>%
+  filter(gaucher_related == "YES")
+write_csv(gaucher_pd_mice,
+          "data_raw/JAX_Gaucher_Parkinson_Mouse_Strains.csv",
+          na = "")
+
+b$close()
+cat("\nFiles created:\n",
+    "  data_raw/JAX_Parkinson_Mouse_Strains.csv\n",
+    "  data_raw/JAX_Parkinson_Mouse_Strains_RAW.csv\n",
+    "  data_raw/JAX_Gaucher_Parkinson_Mouse_Strains.csv\n")
+```
+
+# New codes
+
+
+# JAX Parkinson's Disease Mouse Strains
+
+This script extracts Parkinson's disease mouse strains and strain information
+from the JAX Mice website.
+
+```{r setup, message=FALSE, warning=FALSE}
+library(chromote)
+library(rvest)
+library(dplyr)
+library(purrr)
+library(stringr)
+library(tibble)
+library(readr)
+```
+
+# 1. JAX Parkinson's Disease Website
+
+```{r}
+jax_url <- paste0(
+  "https://mice.jax.org/?",
+  "linkBuilder=1",
+  "&stocktype=",
+  "&diseaseterm=",
+  "&straingroup=",
+  "&researcharea=Neurobiology%20Research",
+  "&researcharea2=Parkinson%27s%20Disease",
+  "&researcharea3=",
+  "&strainstatus=",
+  "&genesymbol=",
+  "&allelesymbol=",
+  "&geneticbackground="
+)
+
+jax_url
+```
+
+# 2. Start Browser
+
+```{r}
+b <- ChromoteSession$new()
+```
+
+# 3. Function to Get Rendered HTML
+
+```{r}
+get_html <- function(browser) {
+  
+  html <- browser$Runtime$evaluate(
+    "document.documentElement.outerHTML"
+  )
+  
+  html$result$value
+}
+```
+
+# 4. Open JAX Parkinson's Disease Page
+
+```{r}
+b$Page$navigate(jax_url)
+
+Sys.sleep(5)
+```
+
+# 5. Scroll Through Search Results
+
+```{r}
+for (i in 1:15) {
+  
+  b$Runtime$evaluate(
+    "window.scrollTo(0, document.body.scrollHeight)"
+  )
+  
+  Sys.sleep(2)
+}
+```
+
+# 6. Get Search Page HTML
+
+```{r}
+search_html <- get_html(b)
+
+search_page <- read_html(search_html)
+
+search_text <- search_page %>%
+  html_text2() %>%
+  str_squish()
+
+substr(
+  search_text,
+  1,
+  2000
+)
+```
+
+# 7. Extract All Links
+
+```{r}
+all_links <- search_page %>%
+  html_elements("a") %>%
+  html_attr("href") %>%
+  na.omit() %>%
+  unique()
+
+length(all_links)
+
+head(
+  all_links,
+  30
+)
+```
+
+# 8. Identify Mouse Strain Links
+
+```{r}
+strain_links <- all_links[
+  str_detect(
+    all_links,
+    regex(
+      "/strain/",
+      ignore_case = TRUE
+    )
+  )
+]
+
+strain_links <- unique(
+  strain_links
+)
+
+length(strain_links)
+
+strain_links
+```
+
+# 9. Create Complete JAX URLs
+
+```{r}
+strain_links <- ifelse(
+  str_detect(
+    strain_links,
+    "^https?://"
+  ),
+  strain_links,
+  paste0(
+    "https://mice.jax.org",
+    strain_links
+  )
+)
+
+strain_links <- unique(
+  strain_links
+)
+
+
+mouse_links <- tibble(
+  jax_url = strain_links
+)
+
+
+cat(
+  "\nMouse strain links found:",
+  nrow(mouse_links),
+  "\n"
+)
+
+mouse_links
+```
+
+# 10. Function to Extract Text Sections
+
+```{r}
+extract_section <- function(text,
+                            start_term,
+                            end_terms,
+                            max_chars = 2000) {
+  
+  if (is.na(text) ||
+      text == "") {
+    
+    return(
+      NA_character_
+    )
+  }
+  
+  
+  end_pattern <- paste(
+    end_terms,
+    collapse = "|"
+  )
+  
+  
+  pattern <- paste0(
+    start_term,
+    "\\s*:?\\s*",
+    "(.{1,", max_chars, "}?)",
+    "(?=",
+    end_pattern,
+    "|$)"
+  )
+  
+  
+  result <- str_match(
+    text,
+    regex(
+      pattern,
+      ignore_case = TRUE,
+      dotall = TRUE
+    )
+  )
+  
+  
+  if (nrow(result) == 0 ||
+      is.na(result[1, 2])) {
+    
+    return(
+      NA_character_
+    )
+  }
+  
+  
+  result <- str_squish(
+    result[1, 2]
+  )
+  
+  
+  return(
+    result
+  )
+}
+```
+
+# 11. Function to Extract Individual Mouse Page
+
+```{r}
+extract_mouse <- function(url,
+                          browser,
+                          wait = 3) {
+  
+  cat(
+    "Reading:\n",
+    url,
+    "\n"
+  )
+  
+  
+  tryCatch({
+    
+    
+    ## navigate to page
+    
+    browser$Page$navigate(
+      url
+    )
+    
+    Sys.sleep(
+      wait
+    )
+    
+    
+    ## scroll down
+    
+    browser$Runtime$evaluate(
+      "window.scrollTo(0, document.body.scrollHeight)"
+    )
+    
+    Sys.sleep(
+      wait
+    )
+    
+    
+    ## rendered HTML
+    
+    html <- get_html(
+      browser
+    )
+    
+    page <- read_html(
+      html
+    )
+    
+    
+    ## strain name
+    
+    h1 <- page %>%
+      html_element("h1")
+    
+    
+    if (length(h1) > 0 &&
+        !is.na(html_text2(h1))) {
+      
+      strain_name <- h1 %>%
+        html_text2() %>%
+        str_squish()
+      
+    } else {
+      
+      strain_name <- page %>%
+        html_element("title") %>%
+        html_text2() %>%
+        str_squish()
+    }
+    
+    
+    ## complete page text
+    
+    full_text <- page %>%
+      html_text2() %>%
+      str_squish()
+    
+    
+    ## JAX stock number
+    
+    stock_match <- str_extract(
+      full_text,
+      regex(
+        paste0(
+          "(Stock\\s*(No\\.?|Number)?|JR)",
+          "\\s*[:#]?\\s*",
+          "[0-9]{5,6}"
+        ),
+        ignore_case = TRUE
+      )
+    )
+    
+    
+    stock_number <- str_extract(
+      stock_match,
+      "[0-9]{5,6}"
+    )
+    
+    
+    ## common uses
+    
+    common_uses <- extract_section(
+      full_text,
+      "Common Uses",
+      c(
+        "Genetic Background",
+        "Description",
+        "Development",
+        "Phenotype",
+        "Breeding",
+        "Availability",
+        "Technical Support"
+      ),
+      2000
+    )
+    
+    
+    ## genetic background
+    
+    genetic_background <- extract_section(
+      full_text,
+      "Genetic Background",
+      c(
+        "Common Uses",
+        "Description",
+        "Development",
+        "Phenotype",
+        "Breeding",
+        "Availability",
+        "Technical Support"
+      ),
+      1500
+    )
+    
+    
+    ## description
+    
+    description <- extract_section(
+      full_text,
+      "Description",
+      c(
+        "Development",
+        "Phenotype",
+        "Breeding",
+        "Expression",
+        "Molecular",
+        "References",
+        "Technical Support"
+      ),
+      4000
+    )
+    
+    
+    ## development
+    
+    development <- extract_section(
+      full_text,
+      "Development",
+      c(
+        "Phenotype",
+        "Breeding",
+        "Expression",
+        "Molecular",
+        "References",
+        "Technical Support"
+      ),
+      4000
+    )
+    
+    
+    ## phenotype
+    
+    phenotype <- extract_section(
+      full_text,
+      "Phenotype",
+      c(
+        "Development",
+        "Breeding",
+        "Expression",
+        "Molecular",
+        "References",
+        "Technical Support"
+      ),
+      5000
+    )
+    
+    
+    ## breeding
+    
+    breeding <- extract_section(
+      full_text,
+      "Breeding",
+      c(
+        "Development",
+        "Phenotype",
+        "Expression",
+        "Molecular",
+        "References",
+        "Technical Support"
+      ),
+      3000
+    )
+    
+    
+    ## return data
+    
+    tibble(
+      stock_number = stock_number,
+      strain_name = strain_name,
+      genetic_background = genetic_background,
+      common_uses = common_uses,
+      description = description,
+      phenotype = phenotype,
+      development = development,
+      breeding = breeding,
+      full_text = full_text,
+      jax_url = url
+    )
+    
+    
+  },
+  
+  
+  error = function(e) {
+    
+    message(
+      "ERROR: ",
+      conditionMessage(e)
+    )
+    
+    
+    tibble(
+      stock_number = NA_character_,
+      strain_name = NA_character_,
+      genetic_background = NA_character_,
+      common_uses = NA_character_,
+      description = NA_character_,
+      phenotype = NA_character_,
+      development = NA_character_,
+      breeding = NA_character_,
+      full_text = NA_character_,
+      jax_url = url
+    )
+    
+  })
+}
+```
+
+# 12. Extract All Mouse Strain Pages
+
+```{r}
+cat(
+  "\nBeginning extraction of individual mouse pages...\n"
+)
+
+
+mouse_data <- map_dfr(
+  mouse_links$jax_url,
+  ~extract_mouse(
+    url = .x,
+    browser = b,
+    wait = 3
+  )
+)
+
+
+cat(
+  "\nMouse pages processed:",
+  nrow(mouse_data),
+  "\n"
+)
+```
+
+# 13. Clean Mouse Data
+
+```{r}
+mouse_data <- mouse_data %>%
+  filter(
+    !is.na(stock_number) |
+      str_detect(
+        full_text,
+        regex(
+          "mouse|mice|strain|stock",
+          ignore_case = TRUE
+        )
+      )
+  ) %>%
+  distinct(
+    jax_url,
+    .keep_all = TRUE
+  )
+
+
+cat(
+  "\nMouse strains retained:",
+  nrow(mouse_data),
+  "\n"
+)
+```
+
+# 14. Identify Parkinson's Disease Genes
+
+```{r}
+pd_genes <- c(
+  "Gba1",
+  "Snca",
+  "Lrrk2",
+  "Pink1",
+  "Prkn",
+  "Park7",
+  "Vps35",
+  "Uchl1",
+  "Atp13a2",
+  "Rab29",
+  "Gak",
+  "Synj1",
+  "Dnajc6",
+  "Fbxo7"
+)
+```
+
+```{r}
+find_pd_genes <- function(x) {
+  
+  if (is.na(x)) {
+    
+    return(
+      NA_character_
+    )
+  }
+  
+  
+  found <- pd_genes[
+    map_lgl(
+      pd_genes,
+      ~str_detect(
+        x,
+        regex(
+          paste0(
+            "\\b",
+            .x,
+            "\\b"
+          ),
+          ignore_case = TRUE
+        )
+      )
+    )
+  ]
+  
+  
+  if (length(found) == 0) {
+    
+    return(
+      NA_character_
+    )
+  }
+  
+  
+  paste(
+    unique(found),
+    collapse = "; "
+  )
+}
+```
+
+```{r}
+mouse_data <- mouse_data %>%
+  mutate(
+    gene = map_chr(
+      full_text,
+      find_pd_genes
+    )
+  )
+```
+
+# 15. Identify Important PD Mutations
+
+```{r}
+pd_mutations <- c(
+  "A53T",
+  "A30P",
+  "E46K",
+  "G2019S",
+  "R1441C",
+  "R1441G",
+  "R1441H",
+  "D409V",
+  "L444P",
+  "N370S"
+)
+```
+
+```{r}
+find_pd_mutations <- function(x) {
+  
+  if (is.na(x)) {
+    
+    return(
+      NA_character_
+    )
+  }
+  
+  
+  found <- pd_mutations[
+    map_lgl(
+      pd_mutations,
+      ~str_detect(
+        x,
+        regex(
+          paste0(
+            "\\b",
+            .x,
+            "\\b"
+          ),
+          ignore_case = TRUE
+        )
+      )
+    )
+  ]
+  
+  
+  if (length(found) == 0) {
+    
+    return(
+      NA_character_
+    )
+  }
+  
+  
+  paste(
+    unique(found),
+    collapse = "; "
+  )
+}
+```
+
+```{r}
+mouse_data <- mouse_data %>%
+  mutate(
+    mutation = map_chr(
+      full_text,
+      find_pd_mutations
+    )
+  )
+```
+
+# 16. Alpha-Synuclein Related Models
+
+```{r}
+mouse_data <- mouse_data %>%
+  mutate(
+    alpha_synuclein_related = case_when(
+      
+      str_detect(
+        full_text,
+        regex(
+          "alpha.?synuclein|α.?synuclein|Snca",
+          ignore_case = TRUE
+        )
+      ) ~ "YES",
+      
+      TRUE ~ "NO"
+    )
+  )
+```
+
+# 17. GBA1 / Gaucher Related Models
+
+```{r}
+mouse_data <- mouse_data %>%
+  mutate(
+    gaucher_related = case_when(
+      
+      str_detect(
+        full_text,
+        regex(
+          paste(
+            "Gba1",
+            "GCase",
+            "glucocerebrosidase",
+            "glucosylceramide",
+            "glucosylsphingosine",
+            "Gaucher",
+            sep = "|"
+          ),
+          ignore_case = TRUE
+        )
+      ) ~ "YES",
+      
+      TRUE ~ "NO"
+    )
+  )
+```
+
+# 18. Classify Parkinson's Disease Model
+
+```{r}
+find_pd_model_type <- function(x) {
+  
+  if (is.na(x)) {
+    
+    return(
+      NA_character_
+    )
+  }
+  
+  
+  model_type <- character(0)
+  
+  
+  ## GBA1
+  
+  if (str_detect(
+    x,
+    regex(
+      "Gba1|GCase|glucocerebrosidase|Gaucher",
+      ignore_case = TRUE
+    )
+  )) {
+    
+    model_type <- c(
+      model_type,
+      "GBA1 / Gaucher-associated model"
+    )
+  }
+  
+  
+  ## alpha-synuclein
+  
+  if (str_detect(
+    x,
+    regex(
+      "Snca|alpha.?synuclein|α.?synuclein",
+      ignore_case = TRUE
+    )
+  )) {
+    
+    model_type <- c(
+      model_type,
+      "Alpha-synuclein model"
+    )
+  }
+  
+  
+  ## LRRK2
+  
+  if (str_detect(
+    x,
+    regex(
+      "Lrrk2",
+      ignore_case = TRUE
+    )
+  )) {
+    
+    model_type <- c(
+      model_type,
+      "LRRK2 model"
+    )
+  }
+  
+  
+  ## PINK1
+  
+  if (str_detect(
+    x,
+    regex(
+      "Pink1",
+      ignore_case = TRUE
+    )
+  )) {
+    
+    model_type <- c(
+      model_type,
+      "PINK1 model"
+    )
+  }
+  
+  
+  ## Parkin
+  
+  if (str_detect(
+    x,
+    regex(
+      "Prkn|Parkin",
+      ignore_case = TRUE
+    )
+  )) {
+    
+    model_type <- c(
+      model_type,
+      "Parkin model"
+    )
+  }
+  
+  
+  ## DJ-1
+  
+  if (str_detect(
+    x,
+    regex(
+      "Park7|DJ.?1",
+      ignore_case = TRUE
+    )
+  )) {
+    
+    model_type <- c(
+      model_type,
+      "DJ-1 model"
+    )
+  }
+  
+  
+  ## VPS35
+  
+  if (str_detect(
+    x,
+    regex(
+      "Vps35",
+      ignore_case = TRUE
+    )
+  )) {
+    
+    model_type <- c(
+      model_type,
+      "VPS35 model"
+    )
+  }
+  
+  
+  ## other model
+  
+  if (length(model_type) == 0) {
+    
+    return(
+      "Other Parkinson-related model"
+    )
+  }
+  
+  
+  paste(
+    unique(model_type),
+    collapse = "; "
+  )
+}
+```
+
+```{r}
+mouse_data <- mouse_data %>%
+  mutate(
+    pd_model_type = map_chr(
+      full_text,
+      find_pd_model_type
+    )
+  )
+```
+
+# 19. Create Final Dataset
+
+```{r}
+pd_mouse_data <- mouse_data %>%
+  select(
+    stock_number,
+    strain_name,
+    gene,
+    mutation,
+    pd_model_type,
+    alpha_synuclein_related,
+    gaucher_related,
+    genetic_background,
+    common_uses,
+    description,
+    phenotype,
+    development,
+    breeding,
+    jax_url,
+    full_text
+  ) %>%
+  arrange(
+    gene,
+    stock_number
+  )
+```
+
+# 20. Check Results
+
+```{r}
+cat(
+  "\nTotal Parkinson's disease mouse strains:",
+  nrow(pd_mouse_data),
+  "\n"
+)
+
+
+pd_mouse_data %>%
+  select(
+    stock_number,
+    strain_name,
+    gene,
+    mutation,
+    pd_model_type
+  )
+```
+
+```{r}
+View(
+  pd_mouse_data
+)
+```
+
+# 21. GBA1 Mouse Models
+
+```{r}
+gba1_mice <- pd_mouse_data %>%
+  filter(
+    gaucher_related == "YES"
+  )
+
+
+gba1_mice %>%
+  select(
+    stock_number,
+    strain_name,
+    gene,
+    mutation,
+    genetic_background,
+    common_uses,
+    phenotype,
+    jax_url
+  )
+```
+
+# 22. Alpha-Synuclein Mouse Models
+
+```{r}
+snca_mice <- pd_mouse_data %>%
+  filter(
+    alpha_synuclein_related == "YES"
+  )
+
+
+snca_mice %>%
+  select(
+    stock_number,
+    strain_name,
+    gene,
+    mutation,
+    pd_model_type,
+    jax_url
+  )
+```
+
+# 23. Save Complete Dataset
+
+```{r}
+write_csv(
+  pd_mouse_data,
+  "JAX_Parkinson_Disease_Mice.csv"
+)
+```
+
+# 24. Save Summary Dataset
+
+```{r}
+pd_mouse_summary <- pd_mouse_data %>%
+  select(
+    stock_number,
+    strain_name,
+    gene,
+    mutation,
+    pd_model_type,
+    alpha_synuclein_related,
+    gaucher_related,
+    genetic_background,
+    common_uses,
+    jax_url
+  )
+
+
+write_csv(
+  pd_mouse_summary,
+  "JAX_Parkinson_Disease_Mice_Summary.csv"
+)
+```
+
+# 25. Save GBA1 Models
+
+```{r}
+write_csv(
+  gba1_mice,
+  "JAX_GBA1_Parkinson_Mice.csv"
+)
+```
+
+# 26. Final Summary
+
+```{r}
+cat(
+  "\nExtraction completed.\n"
+)
+
+cat(
+  "Total PD mouse strains:",
+  nrow(pd_mouse_data),
+  "\n"
+)
+
+cat(
+  "GBA1 / Gaucher-related strains:",
+  sum(pd_mouse_data$gaucher_related == "YES",
+      na.rm = TRUE),
+  "\n"
+)
+
+cat(
+  "Alpha-synuclein-related strains:",
+  sum(pd_mouse_data$alpha_synuclein_related == "YES",
+      na.rm = TRUE),
+  "\n"
+)
+```
+
+# 27. Close Browser
+
+```{r}
+b$close()
+```
+
+
+
+
+
+
+
+
+
+
+
