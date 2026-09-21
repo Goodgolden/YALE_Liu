@@ -1,0 +1,884 @@
+---
+title: "ND7 in Parkinson's Disease — Proposal Figure Notes"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+---
+
+# Overall Hypothesis
+
+The proposal tests **ND7**, a 98-amino-acid C-terminal fragment of progranulin (PGRN), as a potential disease-modifying treatment for Parkinson's disease (PD).
+
+The proposed biological model is:
+
+**ND7 → crosses BBB → interacts with/supports GCase → improves lysosomal function → reduces lipid accumulation and neuroinflammation → reduces neurodegeneration → improves PD-related phenotypes**
+
+The proposal contains two major aims:
+
+- **Aim 1:** Test ND7 in aged **PG9V mice**, a GBA1/PGRN-associated model with neuropathic Gaucher disease (nGD) and PD-like phenotypes.
+- **Aim 2:** Test ND7 in **human α-synuclein A53T (G2-3) transgenic mice**, a genetic PD model.
+
+---
+
+# Preliminary Data
+
+## Figure 1 — Development and Characterization of ND7
+
+### Main question
+
+**What is ND7, and does it retain the important biological activity of full-length PGRN?**
+
+### Figure 1A — ND7 structure and sequence
+
+ND7 is derived from the **C-terminal 98 amino acids of PGRN (aa 496–593)** and contains the **granulin E (Grn E) domain**.
+
+A series of PGRN deletion constructs was tested to identify the region required for interaction with **GCase (glucocerebrosidase)**.
+
+The C-terminal 98-aa region was found to be necessary and sufficient for GCase binding and was named **ND7**, meaning the seventh N-terminal deletion construct.
+
+### Figure 1B — ND7 protein production
+
+Recombinant ND7 was characterized using:
+
+- Coomassie blue staining
+- Western blot using anti-His antibody
+
+This verifies that recombinant His-tagged ND7 protein was successfully produced.
+
+### Figure 1C — Protein-binding assay
+
+ND7 was tested for interaction with proteins involved in PGRN/lysosomal biology.
+
+The proposal states that ND7 binds:
+
+- **GCase**
+- **HSP70**
+- **Sortilin**
+
+The important interaction for the proposal is:
+
+**ND7 ↔ GCase**
+
+This supports the idea that ND7 retains the GCase-related function of PGRN.
+
+### Figure 1D — Functional effect in human GD fibroblasts
+
+ND7 was tested in fibroblasts from a patient with **type 2 Gaucher disease carrying GBA1 D409H**.
+
+ND7 treatment reduced lysosomal storage.
+
+### Main conclusion
+
+**ND7 retains the GCase-binding and lysosomal activity of PGRN despite being only a small C-terminal PGRN fragment.**
+
+This establishes the molecule that will be used throughout the rest of the proposal.
+
+---
+
+## Figure 2 — ND7 Crosses the BBB and Increases GCase Activity
+
+### Main question
+
+**Can systemically administered ND7 reach the brain and remain biologically functional?**
+
+The experiment used:
+
+- **Gba1 D409V/null mice**
+- 2 months old
+- His-tagged ND7
+- **16 mg/kg**
+- Intraperitoneal (IP) injection
+
+These mice have very low residual GCase activity.
+
+### Figure 2A — Distribution of ND7
+
+After injection, anti-His staining was used to detect His-tagged ND7.
+
+ND7 was detected in visceral organs including:
+
+- Lung
+- Liver
+- Spleen
+
+Importantly, ND7 was also detected in the brain, including:
+
+- Cortex
+- Cerebellum
+- Hippocampus
+
+### Interpretation
+
+Detection of systemically administered ND7 in brain tissue provides evidence that ND7 can reach the CNS.
+
+### Figure 2B — Liver GCase activity
+
+GCase activity increased in the liver after ND7 treatment.
+
+### Figure 2C — Brain GCase activity
+
+GCase activity also increased in the brain approximately **0.5–2 hours after injection**.
+
+This is especially important because it suggests that ND7 detected in the CNS is functionally associated with increased GCase activity.
+
+### Main conclusion
+
+**Systemically administered ND7 reaches the brain and increases brain GCase activity.**
+
+This provides the pharmacological rationale for using ND7 to treat neurological disease.
+
+---
+
+## Figure 3 — ND7 Penetrates Brain Tissue Better Than Full-Length PGRN
+
+### Main question
+
+**Is brain penetration a special advantage of ND7 compared with full-length PGRN?**
+
+### Experimental design
+
+PGRN knockout (**Grn-/-**) mice received:
+
+- Full-length PGRN, or
+- ND7
+
+Dose:
+
+**100 µg by IP injection**
+
+Brains were collected **24 hours later**.
+
+A PGRN antibody capable of recognizing both PGRN and ND7 was used for staining.
+
+### Result
+
+The proposal reports detectable signal in brain tissue after **ND7 treatment**, whereas comparable signal was not detected after full-length **PGRN treatment**.
+
+### Main conclusion
+
+**ND7 can penetrate brain tissue, whereas full-length PGRN showed little/no detectable brain penetration under these experimental conditions.**
+
+### Why this matters
+
+Full-length PGRN has potentially useful biological functions, but its therapeutic application has limitations.
+
+ND7 potentially provides:
+
+**PGRN-derived lysosomal activity + better CNS accessibility**
+
+---
+
+## Figure 4 — PG9V Mice Develop CNS Inflammation and PD-Like Pathology
+
+### Main question
+
+**Does the PG9V mouse provide an appropriate model for testing ND7 against PD-like pathology?**
+
+### Mouse model
+
+PG9V mice were generated by combining:
+
+**Gba1 mutation + Pgrn deficiency**
+
+The proposal describes PG9V as a model showing severe neuronopathic Gaucher disease and PD-like features.
+
+### Figure 4A — Astrogliosis
+
+Brain sections from approximately **12-month-old PG9V mice** were stained for:
+
+**GFAP**
+
+GFAP is a commonly used marker of reactive astrocytes.
+
+Increased GFAP therefore indicates:
+
+**astrocyte activation / astrogliosis**
+
+### Figure 4B — α-Synuclein pathology
+
+Brains from:
+
+- WT
+- Gba9V/9V
+- Grn-/-
+- PG9V
+
+were examined for **α-synuclein**.
+
+The proposal reports enhanced α-synuclein accumulation in PG9V brain tissue.
+
+It also describes accumulation of **phosphorylated α-synuclein (Ser129)** as part of the PD-like phenotype.
+
+### Main conclusion
+
+PG9V mice show:
+
+**GBA1/PGRN dysfunction → CNS inflammation + α-synuclein pathology**
+
+Therefore, aged PG9V mice provide the disease model for **Specific Aim 1**.
+
+---
+
+## Figure 5 — ND7 Reduces Lysosomal Storage in PG9V Mice
+
+### Main question
+
+**Can ND7 correct Gaucher-related lysosomal abnormalities in vivo?**
+
+### Experimental design
+
+Three-month-old PG9V mice were challenged with **ovalbumin (OVA)** and treated with:
+
+- PBS
+- Recombinant PGRN
+- ND7
+
+### Figure 5A — Recombinant proteins
+
+Recombinant proteins were characterized by Coomassie blue staining.
+
+This is primarily a protein preparation/quality-control component.
+
+### Figure 5B — Lysosomal ultrastructure
+
+Lung tissue was examined by:
+
+**TEM — transmission electron microscopy**
+
+The experiment visualized abnormal **tubular-like lysosomal structures** associated with lysosomal storage pathology.
+
+### Figure 5C — Quantification
+
+The investigators quantified:
+
+- Number of tubular lysosomes
+- Size of tubular lysosomes
+
+Both PGRN and ND7 reduced lysosomal abnormalities.
+
+### Main conclusion
+
+**ND7 can reproduce an important therapeutic effect of full-length PGRN and reduce lysosomal storage pathology in vivo.**
+
+---
+
+## Figure 6 — ND7 Treats Neuropathic Phenotypes in Aged PG9V Mice
+
+### Main question
+
+**Can ND7 treat CNS disease in PG9V mice after neurological pathology has developed?**
+
+### Experimental design
+
+10-month-old PG9V mice received:
+
+- PBS
+- ND7
+- Imiglucerase
+
+ND7:
+
+**1 mg/kg IP, 3 times/week for 2 months**
+
+Imiglucerase is recombinant GCase used clinically as enzyme replacement therapy for Gaucher disease.
+
+### Figure 6A — GCase activity
+
+GCase activity was measured in:
+
+- Liver
+- Brain
+
+ND7 significantly increased **brain GCase activity**.
+
+Imiglucerase did not produce a comparable increase in brain GCase activity.
+
+### Why?
+
+The proposal interprets this difference in terms of CNS accessibility: recombinant GCase used for conventional ERT does not effectively reach the brain.
+
+### Figure 6B — GluCer accumulation
+
+**GluCer/GC = glucosylceramide**
+
+It is a direct substrate of GCase.
+
+When GCase activity is deficient:
+
+**GCase ↓ → GluCer degradation ↓ → GluCer accumulation ↑**
+
+ND7 reduced brain GluCer accumulation.
+
+Therefore:
+
+**ND7 → GCase activity ↑ → GluCer ↓**
+
+### Figure 6C — Microgliosis
+
+Brain sections were stained for:
+
+**Iba1**
+
+Iba1 is used here as a marker of microglial activation.
+
+ND7 reduced microgliosis.
+
+### Figure 6D — Astrogliosis
+
+Brain sections were stained for:
+
+**GFAP**
+
+ND7 reduced astrocyte activation/astrogliosis.
+
+### Main conclusion
+
+ND7 affects multiple levels of the proposed disease pathway:
+
+**ND7 → brain GCase ↑ → lipid storage ↓ → microgliosis/astrogliosis ↓**
+
+This is one of the strongest preliminary figures supporting **Aim 1**.
+
+---
+
+# MPTP Parkinson's Disease Experiments
+
+## Figure 7 — ND7 Improves Motor Behavior in MPTP-Induced PD
+
+### Main question
+
+The PG9V model is closely connected to GBA1/PGRN biology.
+
+Therefore, the investigators asked:
+
+**Can ND7 also work in a PD model that is not created by GBA1/PGRN mutation?**
+
+### MPTP model
+
+C57BL/6J mice were treated with **MPTP**.
+
+MPTP is converted to the neurotoxic metabolite **MPP+**, which ultimately damages dopaminergic neurons through mitochondrial dysfunction.
+
+The proposal describes animals receiving MPTP with or without PGRN or ND7 treatment.
+
+### Readout
+
+**Open-field/gait trajectory analysis**
+
+MPTP-treated animals showed impaired movement.
+
+ND7-treated animals showed improved gait trajectories.
+
+### Main conclusion
+
+**ND7 improves a functional motor phenotype in chemically induced PD.**
+
+This is important because the effect is not restricted to the PG9V genetic background.
+
+---
+
+## Figure 8 — ND7 Reduces Astrogliosis in MPTP-Induced PD
+
+### Main question
+
+**Does the behavioral improvement in Figure 7 correspond to reduced CNS inflammation?**
+
+### Marker
+
+**GFAP = glial fibrillary acidic protein**
+
+It is used to identify astrocyte activation.
+
+### Tissue regions
+
+The figure examines multiple brain regions, including:
+
+- Hippocampus
+- Midbrain
+- Cerebellum
+
+### Result
+
+MPTP increases astrocyte activation.
+
+ND7 treatment markedly reduces GFAP-associated astrogliosis.
+
+### Main conclusion
+
+**ND7 suppresses neuroinflammatory astrocyte activation in the MPTP PD model.**
+
+This connects the behavioral effect in Figure 7 with a pathological CNS effect.
+
+---
+
+## Figure 9 — ND7 Protects Neurons in MPTP-Induced PD
+
+### Main question
+
+**Does ND7 actually protect neurons, rather than only reducing inflammation or changing behavior?**
+
+### Figure 9A — Western blot
+
+The experiment measures:
+
+- **NeuN**
+- **TH**
+- GAPDH as loading control
+
+### NeuN
+
+**NeuN = neuronal nuclear protein**
+
+It is widely used as a neuronal marker.
+
+Higher NeuN after ND7 treatment is interpreted as better preservation of neurons.
+
+### TH
+
+**TH = tyrosine hydroxylase**
+
+TH is a key enzyme required for dopamine synthesis and is commonly used as a marker of dopaminergic neurons.
+
+MPTP damages dopaminergic neurons.
+
+Therefore:
+
+**MPTP → TH ↓**
+
+The proposal reports that:
+
+**ND7 → TH ↑ relative to MPTP controls**
+
+### Figure 9B — Quantification
+
+Western blot signals for NeuN and TH are quantified.
+
+ND7 increases both markers relative to the MPTP/control treatment conditions described in the proposal.
+
+### Main conclusion
+
+**ND7 is associated with preservation of neurons and dopaminergic neuronal markers in MPTP-induced PD.**
+
+Figures 7–9 therefore form one logical experiment:
+
+**Figure 7:** behavior improves  
+↓  
+**Figure 8:** neuroinflammation decreases  
+↓  
+**Figure 9:** neuronal loss decreases
+
+---
+
+# Proposed Experiments
+
+## Figure 10 — Specific Aim 1 Experimental Design
+
+### Main question
+
+**Can ND7 prevent or treat established PD-like pathology in aged PG9V mice?**
+
+This is a **planned study**, not a preliminary-result figure.
+
+### Mouse model
+
+**PG9V**
+
+Two treatment strategies are proposed.
+
+### Prevention study
+
+Start treatment:
+
+**10 months old**
+
+Continue approximately:
+
+**4 months**
+
+The purpose is to intervene before severe PD-like symptoms.
+
+### Therapeutic study
+
+Start treatment:
+
+**14 months old**
+
+This tests whether ND7 can improve disease after pronounced PD-like pathology has developed.
+
+### Treatment groups
+
+1. PBS
+2. PGRN — **5 mg/kg**
+3. ND7 — **1 mg/kg**
+4. Imiglucerase — **2.5 U/kg**
+
+Treatment frequency:
+
+**3 times/week**
+
+### Animals
+
+Each treatment group:
+
+**n = 16**
+
+- 8 male
+- 8 female
+
+### Behavioral outcomes
+
+Measure:
+
+- Lifespan
+- Hind-limb clasping
+- Gait/open-field behavior
+- Repeated open field
+- Y-maze
+
+### PD/neurodegeneration outcomes
+
+Measure:
+
+- α-Syn
+- β-Amyloid
+- Tau
+- TDP-43
+
+using:
+
+- IHC
+- IF
+- Western blot
+
+### Neuroinflammation
+
+Astrocytes:
+
+**GFAP**
+
+Microglia/macrophages:
+
+- Iba1
+- CD68
+
+Inflammatory genes:
+
+- TNFα
+- IL1β
+- Ccl2/5
+- Cxcl1/2/10
+- Ccr5
+
+### GCase pathway
+
+Measure:
+
+**GCase activity**
+
+and its substrates:
+
+- GC/GluCer
+- GS/GluSph
+
+in CNS and visceral organs.
+
+### Visceral Gaucher phenotypes
+
+Measure:
+
+- Liver/body-weight ratio
+- Spleen/body-weight ratio
+- Lung/body-weight ratio
+- Gaucher cells
+- Tubular lysosomes by TEM
+- Tissue inflammation
+
+### Overall logic
+
+If ND7 is disease modifying, the expected pattern is:
+
+**ND7**
+↓  
+**GCase activity ↑**
+↓  
+**GC + GS accumulation ↓**
+↓  
+**lysosomal dysfunction ↓**
+↓  
+**α-Syn/neurodegenerative pathology ↓**
+↓  
+**microgliosis + astrogliosis ↓**
+↓  
+**neuronal dysfunction ↓**
+↓  
+**motor/cognitive function ↑**
+
+---
+
+# Specific Aim 2
+
+## Figure 11 — A53T α-Synuclein PD Study Design
+
+### Main question
+
+Aim 1 asks whether ND7 works in **GBA1/PGRN-associated disease**.
+
+Aim 2 asks a broader question:
+
+**Can ND7 treat α-synuclein-driven PD even when the disease is not created by the PG9V genotype?**
+
+### Mouse model
+
+**Human α-synuclein A53T transgenic mice — G2-3 line**
+
+These mice overexpress human α-synuclein carrying the PD-associated:
+
+**A53T mutation**
+
+The proposal states that these mice develop:
+
+- Progressive motor abnormalities
+- α-Syn pathology
+- Neuronal abnormalities/loss
+
+### Prevention study
+
+Treatment begins around:
+
+**9 months**
+
+This is before severe symptoms.
+
+### Therapeutic study
+
+Treatment begins around:
+
+**12 months**
+
+This tests treatment after disease has progressed further.
+
+### Treatment groups
+
+1. PBS
+2. PGRN — **5 mg/kg**
+3. ND7 — **1 mg/kg**
+4. L-DOPA — **8 mg/kg**
+
+### Animals
+
+Only **male A53T mice** are proposed because the proposal states that females show resistance to disease progression.
+
+**n = 8/group**
+
+### Behavioral assessment
+
+- Y-maze
+- Repeated open-field testing
+- Motor-function assessment
+
+Baseline testing occurs before treatment.
+
+Repeated assessment is proposed approximately every two weeks.
+
+### α-Synuclein pathology
+
+Particularly important:
+
+**phosphorylated α-Synuclein Ser129 (pS129)**
+
+Other proteins:
+
+- β-Amyloid
+- Tau
+- TDP-43
+
+Methods:
+
+- IHC
+- IF
+- WB
+
+### α-Synuclein inclusions
+
+Use:
+
+**TEM**
+
+to examine dense α-synuclein inclusions in neuronal processes.
+
+### Neuronal death
+
+Use:
+
+**TUNEL staining**
+
+in regions including:
+
+- Brainstem
+- Sensorimotor cortex
+- Spinal cord
+
+### Dopaminergic abnormalities
+
+Measure:
+
+**TH**
+
+using:
+
+- IHC
+- IF
+- WB
+- qPCR
+
+### Neuroinflammation
+
+Measure:
+
+- Astrocyte activation
+- Microglial activation
+- Inflammatory gene expression
+
+### Mitochondrial abnormalities
+
+Measure:
+
+- **Drp1**
+- **PGC-1α**
+- **Clp**
+
+and examine mitochondrial ultrastructure using EM.
+
+### GCase/lysosomal biology
+
+Measure:
+
+- GCase activity
+- GC
+- GS
+- Lysosomal markers
+
+in CNS and visceral tissues.
+
+### Overall logic
+
+This aim tests whether the ND7 mechanism extends beyond the PG9V model:
+
+**A53T α-Syn accumulation**
+↓  
+**PD pathology**
+↓  
+**ND7 treatment**
+↓  
+**lysosomal/GCase function improves?**
+↓  
+**α-Syn pathology decreases?**
+↓  
+**neuroinflammation + mitochondrial dysfunction decrease?**
+↓  
+**neuronal survival improves?**
+↓  
+**behavior improves?**
+
+If yes, ND7 would have evidence of activity in a broader genetic PD context rather than only GBA1/PGRN-associated disease.
+
+---
+
+# How All Figures Connect
+
+| Figure | Question | Main Result / Purpose |
+|:---:|---|---|
+| **1** | What is ND7? | ND7 is a PGRN-derived 98-aa peptide retaining GCase-related activity |
+| **2** | Can ND7 reach CNS? | ND7 reaches brain and increases GCase activity |
+| **3** | ND7 vs PGRN brain penetration? | ND7 is detected in brain where full-length PGRN is not detectably comparable |
+| **4** | Is PG9V a PD-like model? | PG9V shows astrogliosis and α-Syn pathology |
+| **5** | Does ND7 correct lysosomal storage? | ND7 reduces abnormal tubular lysosomal storage |
+| **6** | Does ND7 work in aged PG9V? | GCase ↑, GluCer ↓, microgliosis ↓, astrogliosis ↓ |
+| **7** | Does ND7 improve PD behavior? | Motor/gait phenotype improves in MPTP model |
+| **8** | Does ND7 reduce neuroinflammation? | GFAP/astrogliosis decreases in MPTP model |
+| **9** | Does ND7 protect neurons? | NeuN and TH are increased/preserved |
+| **10** | What will Aim 1 do? | Prevention + therapeutic studies in aged PG9V mice |
+| **11** | What will Aim 2 do? | Prevention + therapeutic studies in A53T mice |
+
+---
+
+# The Complete Proposal Story
+
+The figures are designed to build the argument sequentially:
+
+**Fig. 1**  
+Develop ND7 and show that it retains important PGRN/GCase-related activity.
+
+↓
+
+**Figs. 2–3**  
+Show that ND7 can reach the brain, an essential requirement for treating neurological disease.
+
+↓
+
+**Fig. 4**  
+Establish that PG9V mice develop CNS inflammation and PD-like α-synuclein pathology.
+
+↓
+
+**Figs. 5–6**  
+Show that ND7 improves lysosomal/Gaucher and CNS abnormalities in PG9V mice.
+
+↓
+
+**Figs. 7–9**  
+Move outside the PG9V system and show that ND7 also improves behavior, astrogliosis, and neuronal markers in an MPTP PD model.
+
+↓
+
+**Fig. 10 — Aim 1**  
+Test ND7 rigorously in aged PG9V mice using prevention and therapeutic designs.
+
+↓
+
+**Fig. 11 — Aim 2**  
+Test whether ND7 works in an independent genetic α-synuclein A53T PD model.
+
+---
+
+# Key Markers to Remember
+
+| Marker | What it means in this proposal |
+|---|---|
+| **GCase** | Lysosomal glucocerebrosidase; enzyme encoded by GBA1 |
+| **GC / GluCer** | Glucosylceramide; GCase substrate |
+| **GS / GluSph** | Glucosylsphingosine; GCase-related lipid substrate |
+| **α-Syn** | α-Synuclein; major PD-associated protein |
+| **p-α-Syn Ser129** | Pathological phosphorylated α-synuclein marker |
+| **GFAP** | Astrocyte/astrogliosis marker |
+| **Iba1** | Microglial marker |
+| **CD68** | Activated macrophage/microglia-associated marker |
+| **NeuN** | Neuronal marker |
+| **TH** | Tyrosine hydroxylase; dopaminergic neuron/function marker |
+| **TUNEL** | Detects DNA fragmentation associated with cell death |
+| **Drp1** | Mitochondrial fission-related protein |
+| **PGC-1α** | Regulator of mitochondrial biogenesis/metabolism |
+| **TEM** | Transmission electron microscopy; ultrastructure |
+| **BBB** | Blood-brain barrier |
+| **MPTP** | Chemical used to induce PD-like dopaminergic neurotoxicity |
+| **A53T** | PD-associated mutation in human α-synuclein |
+
+---
+
+# Most Important Take-Home Message
+
+The preliminary data are intended to establish three major points:
+
+1. **ND7 retains PGRN's useful GCase/lysosomal activity.**
+2. **ND7 can reach the CNS and improve GCase/lysosomal and inflammatory abnormalities.**
+3. **ND7 shows beneficial effects in both PG9V and MPTP PD-related models.**
+
+The two proposed aims then ask the critical next questions:
+
+**Aim 1:** Does ND7 prevent and treat established disease in **aged PG9V mice**?
+
+**Aim 2:** Does the therapeutic effect generalize to an independent **α-synuclein A53T genetic PD model**?
+
+
+
